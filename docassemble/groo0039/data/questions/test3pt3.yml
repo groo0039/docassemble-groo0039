@@ -1,0 +1,166 @@
+---
+variable name: DJGperson_info
+use objects: True
+data:
+  - First Name: David
+    Last Name: Watts
+    Age: 52
+    Hobbies: Fishing, movies
+    Like Pets?: True
+    Info Verified?: False
+  - First Name: Millie
+    Last Name: Watts
+    Age: 51
+    Hobbies: Shopping, movies
+    Like Pets?: True
+    Info Verified?: False
+  - First Name: Micro
+    Last Name: Watts
+    Age: 10
+    Hobbies: Wombles
+    Like Pets?: True
+    Info Verified?: False
+  - First Name: Megga
+    Last Name: Watts
+    Age: 22
+    Hobbies: Movies, porn
+    Like Pets?: False
+    Info Verified?: False
+  - First Name: Terra
+    Last Name: Watts
+    Age: 18
+    Hobbies: Boxing, cars
+    Like Pets?: False
+    Info Verified?: False
+  - First Name: Kilo
+    Last Name: Watts
+    Age: 26
+    Hobbies: Food, Drink and Netflix
+    Like Pets?: True
+    Info Verified?: False
+---
+features:
+  css: C4_01_lnf_with_comments.css
+  debug: True
+  hide standard menu: False
+---
+code: |
+  MYindex = 0 # Control index to increment, " MYindex = MYindex + 1 ", before displaying the next single persons' data for verification. I used gathering to record the verification response for each person , and store the response in the object defined below, "varlist", as a list of strings: 'Yes' or 'No'. Problem: My get one person's data code block for verificatin "DJGonerow", below, always displays the first persons data, DJGperson_info[0]. the Second verification should display the second persons data, DJGperson_info[1], and so forth. 
+---
+objects:
+  - varlist: DAList # Stores verification responses as strings: 'Yes' or 'No'.
+---
+
+Mandatory: True
+Question: Watts Family Data
+subquestion: |
+  You have verified **${ varlist.number_as_word()}** Watts family members' Data.
+  
+  ${ DJGcolumn_header }
+  ${ DJGdashes }
+  %for DJGitem in DJGtable_rows: 
+    ${ DJGitem }
+  %endfor
+
+attachments:
+  - name: Watts Family Data
+    filename: Watts_family
+    valid formats:
+      - pdf    
+    content: |
+      **Watts Family Data**
+      
+      
+      ${ DJGcolumn_header }
+      ${ DJGdashes }
+      %for DJGitem in DJGtable_rows:
+       ${ DJGitem }
+      %endfor
+---
+question: Watts Family Data
+Subquestion: |
+  Are you ready to verify the watts family members' data.
+  to add to the list?
+yesno: varlist.there_are_any
+---
+question: Is this correct?
+subquestion: | 
+  ${ DJGcolumn_header }
+  ${ DJGdashes }
+  ${ DJGonerow }
+  
+  
+fields:
+  - corect?: varlist[i]
+    choices:
+      - No
+      - Yes
+---
+question: |
+ Process the next entry?
+yesno: varlist.there_is_another
+--- 
+# Creates  column header
+code: |
+  # Initialise epty variable.
+  DJGcolumn_header = ""
+  
+  # get the keys from the first dictionary item in the list
+  for DJGitem in DJGperson_info[i]:
+    DJGcolumn_header += DJGitem + '|'
+  
+  # Strip off the last vertical bar.  We don't need it.
+  DJGcolumn_header = DJGcolumn_header[:-1]
+---
+code: |
+  #create dashes for table
+
+  #initialise var with first dashes
+  DJGdashes = '---'
+
+  #add dasshes and |, acording to number of dictionary key:value pairs
+
+  for DJGitem in range(len(DJGperson_info[0]) -1):
+    DJGdashes += "|---"
+---
+
+code: | 
+  # Initialise empty row list. Each item in the list, will be a row for Mako table row.
+  DJGtable_rows = []
+  # Each item (a dictionary) of the data list 'person info' into 'item' variable.
+  #nested for loop on each item (dictionary).
+  for DJGitem in DJGperson_info:      
+      DJGrow = ""  #empty row string.
+      #each dictionary value extracted, pipe added, and appended to 'row' string.
+      for DJGkey in DJGitem:
+        DJGrow += str(DJGitem[DJGkey]) + '|'
+      # remove the last character of the 'row' string, which is the last pipe.
+      DJGrow = DJGrow[:-1]
+      # Add each 'row' string as an item in the 'table rows', list.
+      DJGtable_rows.append(DJGrow)
+---
+code: |
+  DJGonerow = ""
+  DJGitem = DJGperson_info[MYindex]
+  for DJGkey in DJGitem:
+    DJGonerow += str(DJGitem[DJGkey]) + '|'
+  DJGonerow = DJGonerow[:-1]
+  MYindex = MYindex + 1
+---  
+code: | 
+  # Initialise empty row list. Each item in the list, will be a row for Mako table row.
+  DJGtable_rows = []
+  # Each item (a dictionary) of the data list 'person info' into 'item' variable.
+  #nested for loop on each item (dictionary).
+  for DJGitem in DJGperson_info:      
+      DJGrow = ""  #empty row string.
+      #each dictionary value extracted, pipe added, and appended to 'row' string.
+      for DJGkey in DJGitem:
+        DJGrow += str(DJGitem[DJGkey]) + '|'
+      # remove the last character of the 'row' string, which is the last pipe.
+      DJGrow = DJGrow[:-1]
+      # Add each 'row' string as an item in the 'table rows', list.
+      DJGtable_rows.append(DJGrow)
+---
+  
+
